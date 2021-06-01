@@ -1,1 +1,50 @@
-// TODO
+.container {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.postsContainer {
+  margin-top: 4rem;
+}
+
+.post {
+  & + .post {
+    margin-top: 3rem;
+  }
+
+  a {
+    font-weight: 700;
+    font-size: 1.75rem;
+    color: var(--title);
+  }
+
+  p {
+    font-size: 1.125rem;
+    line-height: 1.3rem;
+    color: var(--description);
+    margin-top: 0.5rem;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+
+    p {
+      color: var(--posts-info);
+      font-size: 0.875rem;
+
+      display: flex;
+      align-items: center;
+
+      & + p {
+        margin-left: 1rem;
+      }
+
+      img {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}

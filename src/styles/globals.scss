@@ -1,7 +1,47 @@
+:root {
+  --background: #1a1d23;
+  --title: #f8f8f8;
+  --description: #d7d7d7;
+  --posts-info: #bbbbbb;
+  --pink: #ff57b2;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-// TODO
+@media (max-width: 1080px) {
+  html {
+    font-size: 93.75%;
+  }
+}
+@media (max-width: 720px) {
+  html {
+    font-size: 87.5%;
+  }
+}
+
+body {
+  background: var(--background);
+  color: white;
+}
+
+body,
+input,
+select,
+button,
+textarea {
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit; // cor do pai
+  text-decoration: none;
+}

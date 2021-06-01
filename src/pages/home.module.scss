@@ -1,5 +1,5 @@
 .container {
-  max-width: 800px;
+  max-width: 720px;
   margin: 3rem auto;
   padding: 0 2rem;
 }
@@ -9,6 +9,9 @@
 }
 
 .post {
+  max-width: 720px;
+  margin: 0 auto;
+
   & + .post {
     margin-top: 3rem;
   }
@@ -47,4 +50,14 @@
       }
     }
   }
+}
+
+.loadPostsButton {
+  border: 0;
+  background: transparent;
+  color: var(--pink);
+  margin-top: 4rem;
+
+  font-weight: 600;
+  font-size: 1.125rem;
 }

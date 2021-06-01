@@ -43,7 +43,7 @@ export default function Home({ postsPagination }: HomeProps) {
         <main className={styles.postsContainer}>
           {postsPagination.results.map(post => (
             <div className={styles.post} key={post.uid}>
-              <Link href="#">
+              <Link href={`/post/${post.uid}`}>
                 <a>{post.data.title}</a>
               </Link>
               <p>{post.data.subtitle}</p>
@@ -59,6 +59,11 @@ export default function Home({ postsPagination }: HomeProps) {
               </div>
             </div>
           ))}
+          {postsPagination.next_page !== null && (
+            <button type="button" className={styles.loadPostsButton}>
+              Carregar mais posts
+            </button>
+          )}
         </main>
       </div>
     </>
@@ -98,5 +103,6 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       postsPagination,
     },
+    revalidate: 60 * 60 * 24, // 24 hours
   };
 };

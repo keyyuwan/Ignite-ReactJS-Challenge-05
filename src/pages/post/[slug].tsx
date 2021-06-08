@@ -1,5 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import { getPrismicClient } from '../../services/prismic';
 import Prismic from '@prismicio/client';
@@ -35,36 +36,51 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
+  const router = useRouter();
   return (
     <>
-      <Head>
-        <title>{post.data.title} | spacetravelling</title>
-      </Head>
-      <Header />
-      <img
-        src={post.data.banner.url}
-        alt="eat sleep code repeat"
-        className={styles.banner}
-      />
-      <main className={styles.postContainer}>
-        <h1>{post.data.title}</h1>
-        <div>
-          <p>
-            <img src="/calendar.svg" alt="calendar" />
-            {post.first_publication_date}
-          </p>
-          <p>
-            <img src="/user.svg" alt="user" />
-            {post.data.author}
-          </p>
-          <p>
-            <img src="/clock.svg" alt="clockuser" />5 min
-          </p>
-        </div>
-        {/* <article className={styles.content}>
-          <h2>{post.data.content.heading}</h2>
-        </article> */}
-      </main>
+      {router.isFallback ? (
+        <div>Carregando...</div>
+      ) : (
+        <>
+          <Head>
+            <title>{post.data.title} | spacetravelling</title>
+          </Head>
+          <Header />
+          <img
+            src={post.data.banner.url}
+            alt="eat sleep code repeat"
+            className={styles.banner}
+          />
+          <main className={styles.postContainer}>
+            <h1>{post.data.title}</h1>
+            <div className={styles.postInfo}>
+              <p>
+                <img src="/calendar.svg" alt="calendar" />
+                {post.first_publication_date}
+              </p>
+              <p>
+                <img src="/user.svg" alt="user" />
+                {post.data.author}
+              </p>
+              <p>
+                <img src="/clock.svg" alt="clockuser" />5 min
+              </p>
+            </div>
+            {post.data.content.map(content => (
+              <article key={content.heading} className={styles.postContent}>
+                <h2>{content.heading}</h2>
+                <div
+                  className={styles.postParagraphs}
+                  dangerouslySetInnerHTML={{
+                    __html: RichText.asHtml(content.body),
+                  }}
+                />
+              </article>
+            ))}
+          </main>
+        </>
+      )}
     </>
   );
 }
@@ -90,8 +106,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async context => {
   const prismic = getPrismicClient();
-  const slug = context.params.slug.toString();
-  const response = await prismic.getByUID('posts', slug, {});
+  const { slug } = context.params;
+  const response = await prismic.getByUID('posts', String(slug), {});
 
   const post = {
     first_publication_date: format(
@@ -107,10 +123,12 @@ export const getStaticProps: GetStaticProps = async context => {
         url: response.data.banner.url,
       },
       author: response.data.author,
-      content: RichText.asText(response.data.content),
+      content: response.data.content.map(content => ({
+        heading: content.heading,
+        body: [...content.body],
+      })),
     },
   };
-  console.log(response.data.content[0].body);
 
   return {
     props: {

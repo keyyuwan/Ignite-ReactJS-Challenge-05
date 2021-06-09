@@ -3,35 +3,12 @@
 }
 
 .postContainer {
-  max-width: 720px;
   margin: 4rem auto 0;
-  padding: 0 2rem;
 
   h1 {
     font-size: 3rem;
     font-weight: 700;
     color: var(--title);
-  }
-
-  .postInfo {
-    display: flex;
-    align-items: center;
-    color: var(--posts-info);
-    margin-top: 1.5rem;
-
-    p {
-      font-size: 0.875rem;
-      display: flex;
-      align-items: center;
-
-      & + p {
-        margin-left: 1rem;
-      }
-
-      img {
-        margin-right: 0.5rem;
-      }
-    }
   }
 
   .postContent {

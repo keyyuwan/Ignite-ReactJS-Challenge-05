@@ -1,1 +1,25 @@
-// TODO
+.container {
+  max-width: 720px;
+  padding: 0 2rem;
+}
+
+.postInfo {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+
+  p {
+    color: var(--posts-info);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+
+    & + p {
+      margin-left: 1rem;
+    }
+
+    img {
+      margin-right: 0.5rem;
+    }
+  }
+}

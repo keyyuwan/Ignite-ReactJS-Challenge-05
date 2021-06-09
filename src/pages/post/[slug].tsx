@@ -37,6 +37,27 @@ interface PostProps {
 
 export default function Post({ post }: PostProps) {
   const router = useRouter();
+
+  const contentWordsAmount = post.data.content.reduce((total, item) => {
+    const headingWordsAmount = item.heading.split(' ').length;
+    total += headingWordsAmount;
+
+    const bodyWordsAmountArray = item.body.map(p => p.text.split(' ').length);
+    bodyWordsAmountArray.map(word => (total += word));
+    return total;
+  }, 0);
+
+  const wordsReadPerMinuteAvg = 200;
+  const readingTime = Math.ceil(contentWordsAmount / wordsReadPerMinuteAvg);
+
+  const formattedDate = format(
+    new Date(post.first_publication_date),
+    'dd MMM y',
+    {
+      locale: ptBR,
+    }
+  );
+
   return (
     <>
       {router.isFallback ? (
@@ -49,22 +70,23 @@ export default function Post({ post }: PostProps) {
           <Header />
           <img
             src={post.data.banner.url}
-            alt="eat sleep code repeat"
+            alt="imagem"
             className={styles.banner}
           />
-          <main className={styles.postContainer}>
+          <main className={`${styles.postContainer} ${commonStyles.container}`}>
             <h1>{post.data.title}</h1>
-            <div className={styles.postInfo}>
+            <div className={`${styles.postInfo} ${commonStyles.postInfo}`}>
               <p>
                 <img src="/calendar.svg" alt="calendar" />
-                {post.first_publication_date}
+                {formattedDate}
               </p>
               <p>
                 <img src="/user.svg" alt="user" />
                 {post.data.author}
               </p>
               <p>
-                <img src="/clock.svg" alt="clockuser" />5 min
+                <img src="/clock.svg" alt="clockuser" />
+                {readingTime} min
               </p>
             </div>
             {post.data.content.map(content => (
@@ -87,19 +109,18 @@ export default function Post({ post }: PostProps) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
-  const posts = await prismic.query(
-    [Prismic.predicates.at('document.type', 'posts')],
-    {
-      pageSize: 20,
-    }
-  );
+  const posts = await prismic.query([
+    Prismic.predicates.at('document.type', 'posts'),
+  ]);
 
-  const post = posts.results.map(post => ({
-    slug: post.uid,
+  const paths = posts.results.map(post => ({
+    params: {
+      slug: post.uid,
+    },
   }));
 
   return {
-    paths: [{ params: { slug: post[0].slug } }],
+    paths,
     fallback: true,
   };
 };
@@ -110,19 +131,15 @@ export const getStaticProps: GetStaticProps = async context => {
   const response = await prismic.getByUID('posts', String(slug), {});
 
   const post = {
-    first_publication_date: format(
-      new Date(response.first_publication_date),
-      'dd MMM y',
-      {
-        locale: ptBR,
-      }
-    ),
+    uid: response.uid,
+    first_publication_date: response.first_publication_date,
     data: {
       title: response.data.title,
+      subtitle: response.data.subtitle,
+      author: response.data.author,
       banner: {
         url: response.data.banner.url,
       },
-      author: response.data.author,
       content: response.data.content.map(content => ({
         heading: content.heading,
         body: [...content.body],
